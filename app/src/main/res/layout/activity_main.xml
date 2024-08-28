@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <EditText
+        android:id="@+id/medicationName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Nama Obat"
+        android:padding="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="8dp" />
+
+    <EditText
+        android:id="@+id/doseAmount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Jumlah Dosis"
+        android:padding="16dp"
+        android:layout_below="@id/medicationName"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="8dp" />
+
+    <TextView
+        android:id="@+id/timeDisplay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pilih Waktu"
+        android:layout_below="@id/doseAmount"
+        android:layout_marginTop="16dp" />
+
+    <Button
+        android:id="@+id/setTimeButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Set Time"
+        android:layout_below="@id/timeDisplay"
+        android:layout_marginTop="16dp" />
+
+    <Button
+        android:id="@+id/setReminderButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Set Reminder"
+        android:layout_below="@id/setTimeButton"
+        android:layout_marginTop="16dp" />
+
+    <Button
+        android:id="@+id/viewRemindersButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="View Reminders"
+        android:layout_below="@id/setReminderButton"
+        android:layout_marginTop="16dp" />
+
+</RelativeLayout>
