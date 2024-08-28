@@ -17,18 +17,24 @@ class RemindersActivity : AppCompatActivity() {
     private lateinit var remindersListView: ListView
     private lateinit var medicationName: EditText
     private lateinit var doseAmount: EditText
+    private lateinit var deleteAllButton: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_reminders) // Pastikan ini sesuai dengan layout yang benar
 
         sharedPreferences = getSharedPreferences("MedicationReminders", Context.MODE_PRIVATE)
         remindersListView = findViewById(R.id.remindersListView)
         medicationName = findViewById(R.id.medicationName)
         doseAmount = findViewById(R.id.doseAmount)
+        deleteAllButton = findViewById(R.id.deleteRemindersButton)
 
         findViewById<Button>(R.id.setReminderButton).setOnClickListener {
             addReminder()
+        }
+
+        deleteAllButton.setOnClickListener {
+            deleteAllReminders()
         }
 
         loadReminders()
@@ -67,11 +73,19 @@ class RemindersActivity : AppCompatActivity() {
     }
 
     private fun removeReminder(position: Int) {
-        val reminderList = (remindersListView.adapter as ArrayAdapter<*>).getItem(position) as String
-        val reminderName = reminderList.split(" - ")[0].replace("Reminder: ", "")
+        val reminderText = (remindersListView.adapter as ArrayAdapter<*>).getItem(position) as String
+        val reminderName = reminderText.split(" - ")[0].replace("Reminder: ", "")
 
         val editor = sharedPreferences.edit()
         editor.remove(reminderName)
+        editor.apply()
+
+        loadReminders()
+    }
+
+    private fun deleteAllReminders() {
+        val editor = sharedPreferences.edit()
+        editor.clear() // Remove all entries
         editor.apply()
 
         loadReminders()

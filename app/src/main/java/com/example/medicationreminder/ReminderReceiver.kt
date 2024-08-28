@@ -11,6 +11,7 @@ import android.os.Build
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 
+
 class ReminderReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         val medicationName = intent.getStringExtra("medication_name")
@@ -20,19 +21,14 @@ class ReminderReceiver : BroadcastReceiver() {
         Toast.makeText(context, "Time to take $medicationName. Dose: $doseAmount", Toast.LENGTH_LONG).show()
 
         // Memutar suara alarm
-        playAlarmSound(context)
-
-        // Buat notifikasi
-        createNotification(context, medicationName, doseAmount)
-    }
-
-    private fun playAlarmSound(context: Context) {
-        // Pastikan file audio ada di folder res/raw dan ganti R.raw.alarm_sound dengan nama file audio Anda
         val mediaPlayer = MediaPlayer.create(context, R.raw.alarm_sound)
         mediaPlayer.start()
         mediaPlayer.setOnCompletionListener {
             mediaPlayer.release()
         }
+
+        // Buat notifikasi
+        createNotification(context, medicationName, doseAmount)
     }
 
     private fun createNotification(context: Context, medicationName: String?, doseAmount: String?) {
