@@ -3,7 +3,8 @@ package com.example.medicationreminder
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.widget.TextView
+import android.widget.ArrayAdapter
+import android.widget.ListView
 import androidx.appcompat.app.AppCompatActivity
 
 class ViewRemindersActivity : AppCompatActivity() {
@@ -12,20 +13,24 @@ class ViewRemindersActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_view_reminders)
 
-        val remindersTextView = findViewById<TextView>(R.id.remindersTextView)
+        // Temukan ListView
+        val remindersListView = findViewById<ListView>(R.id.remindersListView)
 
-        // Mendapatkan SharedPreferences
+        // Ambil SharedPreferences
         val sharedPreferences: SharedPreferences = getSharedPreferences("MedicationReminders", Context.MODE_PRIVATE)
-
-        // Mengambil semua pengingat yang tersimpan
         val allReminders = sharedPreferences.all
-        val remindersStringBuilder = StringBuilder()
 
-        for ((key, value) in allReminders.entries) {
-            remindersStringBuilder.append("$key: $value\n")
-        }
+        // Buat daftar pengingat
+        val reminderList = allReminders.map { entry ->
+            val key = entry.key
+            val dose = entry.value.toString()
+            "Reminder: $key - Dose: $dose"
+        }.toList() // Konversi ke List
 
-        // Menampilkan pengingat di TextView
-        remindersTextView.text = remindersStringBuilder.toString()
+        // Buat ArrayAdapter
+        val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, reminderList)
+
+        // Set adapter ke ListView
+        remindersListView.adapter = adapter
     }
 }

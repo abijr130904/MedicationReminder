@@ -11,7 +11,6 @@ import android.os.Build
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 
-
 class ReminderReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         val medicationName = intent.getStringExtra("medication_name")
@@ -21,14 +20,19 @@ class ReminderReceiver : BroadcastReceiver() {
         Toast.makeText(context, "Time to take $medicationName. Dose: $doseAmount", Toast.LENGTH_LONG).show()
 
         // Memutar suara alarm
+        playAlarmSound(context)
+
+        // Buat notifikasi
+        createNotification(context, medicationName, doseAmount)
+    }
+
+    private fun playAlarmSound(context: Context) {
+        // Pastikan file audio ada di folder res/raw dan ganti R.raw.alarm_sound dengan nama file audio Anda
         val mediaPlayer = MediaPlayer.create(context, R.raw.alarm_sound)
         mediaPlayer.start()
         mediaPlayer.setOnCompletionListener {
             mediaPlayer.release()
         }
-
-        // Buat notifikasi
-        createNotification(context, medicationName, doseAmount)
     }
 
     private fun createNotification(context: Context, medicationName: String?, doseAmount: String?) {
@@ -36,7 +40,7 @@ class ReminderReceiver : BroadcastReceiver() {
 
         // Buat intent untuk membuka aplikasi saat notifikasi diklik
         val notificationIntent = Intent(context, MainActivity::class.java)
-        val pendingIntent = PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+        val pendingIntent = PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
         // Buat channel notifikasi untuk Android Oreo dan versi lebih baru
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -49,13 +53,12 @@ class ReminderReceiver : BroadcastReceiver() {
 
         // Buat notifikasi
         val notificationBuilder = NotificationCompat.Builder(context, "medication_reminder_channel")
-            .setSmallIcon(R.drawable.ic_launcher_foreground) // Pastikan ikon ini ada di folder drawable
+            .setSmallIcon(R.drawable.ic_launcher_foreground) // Ganti dengan ikon notifikasi Anda
             .setContentTitle("Medication Reminder")
             .setContentText("Time to take $medicationName. Dose: $doseAmount")
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
-            .setSound(android.provider.Settings.System.DEFAULT_NOTIFICATION_URI) // Optional: set default sound
 
         // Tampilkan notifikasi
         notificationManager.notify(0, notificationBuilder.build())
