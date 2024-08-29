@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-
     <!-- Tambahkan permissions di sini -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
-
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:allowBackup="true"
@@ -18,8 +16,21 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MedicationReminder"
         tools:targetApi="31">
-
-        <!-- Daftarkan Receiver -->
+        <activity
+            android:name=".ReminderReceiver"
+            android:exported="false" />
+        <activity
+            android:name=".DaftarPengingatActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AddReminderActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ViewRemindersActivity"
+            android:exported="false" />
+        <activity
+            android:name=".RemindersActivity"
+            android:exported="false" /> <!-- Daftarkan Receiver -->
         <receiver
             android:name=".ReminderReceiver"
             android:exported="true"
@@ -27,24 +38,16 @@
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
-        </receiver>
-
-        <!-- Daftarkan Activity Main -->
+        </receiver> <!-- Daftarkan Activity Main -->
         <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <!-- Daftarkan Activity untuk Melihat Pengingat -->
-        <activity
-            android:name=".ViewRemindersActivity"
-            android:exported="true">
-        </activity>
-
     </application>
 
 </manifest>

@@ -1,80 +1,37 @@
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:padding="16dp">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/medicationNameLayout"
-        android:layout_width="0dp"
+    <EditText
+        android:id="@+id/medicationName"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        android:hint="Medication Name" />
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/medicationName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Nama Obat" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/doseAmountLayout"
-        android:layout_width="0dp"
+    <EditText
+        android:id="@+id/doseAmount"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/medicationNameLayout"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp">
+        android:hint="Dose Amount" />
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/doseAmount"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Jumlah Dosis" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <TextView
-        android:id="@+id/timeDisplay"
+    <TimePicker
+        android:id="@+id/timePicker"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Pilih Waktu"
-        app:layout_constraintTop_toBottomOf="@id/doseAmountLayout"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp" />
-
-    <Button
-        android:id="@+id/setTimeButton"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Set Time"
-        app:layout_constraintTop_toBottomOf="@id/timeDisplay"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp" />
+        android:timePickerMode="spinner" />
 
     <Button
         android:id="@+id/setReminderButton"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Set Reminder"
-        app:layout_constraintTop_toBottomOf="@id/setTimeButton"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:text="Set Reminder" />
+
+    <ListView
+        android:id="@+id/remindersListView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginTop="16dp" />
 
-    <Button
-        android:id="@+id/viewRemindersButton"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="View Reminders"
-        app:layout_constraintTop_toBottomOf="@id/setReminderButton"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

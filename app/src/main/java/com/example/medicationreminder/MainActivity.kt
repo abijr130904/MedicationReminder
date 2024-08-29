@@ -2,95 +2,94 @@ package com.example.medicationreminder
 
 import android.app.AlarmManager
 import android.app.PendingIntent
-import android.app.TimePickerDialog
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
-import android.widget.Toast
+import android.view.View
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import java.util.Calendar
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var timeDisplay: TextView
-    private var selectedHour = 9
-    private var selectedMinute = 0
+    private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var remindersListView: ListView
+    private lateinit var medicationName: EditText
+    private lateinit var doseAmount: EditText
+    private lateinit var timePicker: TimePicker
+    private lateinit var adapter: ArrayAdapter<String>
+    private lateinit var remindersList: MutableList<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val medicationName = findViewById<EditText>(R.id.medicationName)
-        val doseAmount = findViewById<EditText>(R.id.doseAmount)
-        timeDisplay = findViewById(R.id.timeDisplay)
-        val setTimeButton = findViewById<Button>(R.id.setTimeButton)
-        val setReminderButton = findViewById<Button>(R.id.setReminderButton)
-        val viewRemindersButton = findViewById<Button>(R.id.viewRemindersButton)
+        sharedPreferences = getSharedPreferences("MedicationReminders", Context.MODE_PRIVATE)
+        remindersListView = findViewById(R.id.remindersListView)
+        medicationName = findViewById(R.id.medicationName)
+        doseAmount = findViewById(R.id.doseAmount)
+        timePicker = findViewById(R.id.timePicker)
+        remindersList = sharedPreferences.all.keys.toMutableList()
 
-        setTimeButton.setOnClickListener {
-            showTimePickerDialog()
+        adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, remindersList)
+        remindersListView.adapter = adapter
+
+        findViewById<Button>(R.id.setReminderButton).setOnClickListener {
+            addReminder()
         }
 
-        setReminderButton.setOnClickListener {
-            val name = medicationName.text.toString()
-            val dose = doseAmount.text.toString()
-
-            if (name.isNotEmpty() && dose.isNotEmpty()) {
-                setReminder(name, dose)
-                Toast.makeText(this, "Reminder set for $name at $selectedHour:$selectedMinute", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(this, "Please enter medication name and dose", Toast.LENGTH_SHORT).show()
-            }
-        }
-
-        viewRemindersButton.setOnClickListener {
-            val intent = Intent(this, ViewRemindersActivity::class.java)
-            startActivity(intent)
+        remindersListView.setOnItemClickListener { _, _, position, _ ->
+            removeReminder(position)
         }
     }
 
-    private fun showTimePickerDialog() {
-        val timePickerDialog = TimePickerDialog(this, { _, hourOfDay, minute ->
-            selectedHour = hourOfDay
-            selectedMinute = minute
-            timeDisplay.text = String.format("%02d:%02d", selectedHour, selectedMinute)
-        }, selectedHour, selectedMinute, true)
-        timePickerDialog.show()
+    private fun addReminder() {
+        val name = medicationName.text.toString()
+        val dose = doseAmount.text.toString()
+        val hour = timePicker.hour
+        val minute = timePicker.minute
+
+        if (name.isNotBlank() && dose.isNotBlank()) {
+            val reminder = "$name - $dose at $hour:$minute"
+            remindersList.add(reminder)
+
+            val editor = sharedPreferences.edit()
+            editor.putString(reminder, "$name-$dose-$hour-$minute")
+            editor.apply()
+
+            adapter.notifyDataSetChanged()
+
+            setAlarm(name, dose, hour, minute)
+            medicationName.text.clear()
+            doseAmount.text.clear()
+        }
     }
 
-    private fun setReminder(name: String, dose: String) {
+    private fun removeReminder(position: Int) {
+        val reminder = remindersList[position]
+        val editor = sharedPreferences.edit()
+        editor.remove(reminder)
+        editor.apply()
+
+        remindersList.removeAt(position)
+        adapter.notifyDataSetChanged()
+    }
+
+    private fun setAlarm(name: String, dose: String, hour: Int, minute: Int) {
         val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(this, ReminderReceiver::class.java).apply {
             putExtra("medication_name", name)
             putExtra("dose_amount", dose)
-            putExtra("hour", selectedHour)
-            putExtra("minute", selectedMinute)
         }
         val pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
         val calendar = Calendar.getInstance().apply {
-            set(Calendar.HOUR_OF_DAY, selectedHour)
-            set(Calendar.MINUTE, selectedMinute)
+            set(Calendar.HOUR_OF_DAY, hour)
+            set(Calendar.MINUTE, minute)
             set(Calendar.SECOND, 0)
         }
 
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
-
-        saveReminder(name, dose, selectedHour, selectedMinute)
-    }
-
-    private fun saveReminder(name: String, dose: String, hour: Int, minute: Int) {
-        val sharedPreferences: SharedPreferences = getSharedPreferences("MedicationReminders", Context.MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        val key = "${name}_${hour}_${minute}"
-        editor.putString(key, dose)
-        editor.putInt("${name}_${hour}_${minute}_hour", hour)
-        editor.putInt("${name}_${hour}_${minute}_minute", minute)
-        editor.apply()
     }
 }
